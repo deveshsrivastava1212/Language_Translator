@@ -1,0 +1,32 @@
+{
+  "name": "translator",
+  "version": "1.0.0",
+  "description": "Translate any language into another language",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deveshsrivastava1212/Language_Translator.git"
+  },
+  "author": "Devesh Srivastava",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/deveshsrivastava1212/Language_Translator/issues"
+  },
+  "homepage": "https://github.com/deveshsrivastava1212/Language_Translator#readme",
+  "dependencies": {
+    "@vitalets/google-translate-api": "^7.0.0",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "dotenv": "^14.3.2",
+    "express": "^4.17.2",
+    "node-cache": "^5.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
