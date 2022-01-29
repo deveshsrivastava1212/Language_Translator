@@ -1,12 +1,27 @@
+
 const cache = require('../cache/cacheRouter');
 const googleTranslate = require('@vitalets/google-translate-api');
 
-exports.transResponse =async(req,res,next)=>{
+exports.transResponse = async(req,res,next)=>{
     //storing the parameter query
     let param = req.query;
     let result = {};
-    let result2 ={};
+    let result2 = {
+        'hi': null,
+        'urdu': null,
+        'ka': null,
+        'bengali': null
+    };
+    let languages= ['hi', 'urdu', 'ka', 'bengali']
     try {
+
+        for(var i=0; i< languages.length; i++)
+        {
+            let item = languages[i];
+            let store = await googleTranslate(param.yourText , {to : languages[i]})
+            result2[item] = store.text;
+        }
+
         //getting the response from the googleTranslate API by providing the query parameter
         const response = await googleTranslate(param.yourText , {to : param.targetLanguage});
         //storing in the empty list
@@ -18,8 +33,9 @@ exports.transResponse =async(req,res,next)=>{
         //responsing 200 OK and display the json data
         res.status(200).json({
             message: "Successfull",
-            data : result
-        })
+            data : result, result2
+        }) 
+        
     } catch (err) {
         res.status(500).send('OOPs something went wrong');
         console.log(err);
@@ -34,7 +50,9 @@ exports.test = async(req, res)=> {
         const response = await googleTranslate('god is great', {to: 'ja'})
         result.translatedText = response.text;
         result.fromLanguage = response.from.language.iso;
-       
+        
+        result2.FirstLang= (await googleTranslate('god is great', {to: 'hi'})).text;
+        result2.SecondLang= (await googleTranslate('god is great', {to: 'ka'})).text;
         res.status(200).json({
         message: "successfull",
             data: result
