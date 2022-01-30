@@ -5,7 +5,7 @@ const cache = require('../cache/cacheRouter');
 const router = express.Router();
 
 //GET router API
-router.get('/translate', cache(10), transResponse);
-router.get('/test',cache(10), test);
+router.get('/translate', cache(15), transResponse);
+router.get('/test',cache(15), test);
 
 module.exports = router;
