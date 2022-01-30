@@ -55,7 +55,28 @@ We have to pass two `Query Params` in key
     <br/>
     
 - A sample example is shown here when we hit the route on Postman.
-![](./ScreenShot/translateSS.png)
+![tanslateSS](https://user-images.githubusercontent.com/66031004/151699019-7d47c610-3781-4881-9c39-5c4d0f20ccbe.png)
 
+## Caching 
+In order to avoid repeated hits to the translation API, caching of translation is done.
+
+If the HTTP method is `GET` then we cache the translation.
+For the first time hit, that unique request will take the actual time to fetch the response. But after that it get stored into cached for some time(here I fix the same for 15 sec). After storing if we hitting GET request again and again it will fetch the response from the cache but only or 15 sec as I've decided.
+
+For this I use `node-cache` npm package and installing by `npm i node-cache`.
+
+## Testing
+To test the APIs is use `jest` along with `supertest` (which provide less complex structure to handle request.)
+
+There are two test cases-
+  - First test case is used for `/test` api to check only the response status code is expected or not.
+  - Second test case is used for `/translate` api in which in test case I provide the String in `yourText` and give the choosen ISO language code in `targetLangauge` and then 
+    let it to be done, it will take time to fetch the unique request, so to handle this I use setTimeout function and then checking the response status code `.toBe(200)`
+    
+- To test the APIs.
+  ```
+  # to run the test script, write:
+  npm test
+  ```
 
 
