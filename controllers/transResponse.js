@@ -45,14 +45,10 @@ exports.transResponse = async(req,res,next)=>{
 //GET router to test the API
 exports.test = async(req, res)=> {
     let result ={};
-    let result2={};
     try {
         const response = await googleTranslate('god is great', {to: 'ja'})
         result.translatedText = response.text;
         result.fromLanguage = response.from.language.iso;
-        
-        result2.FirstLang= (await googleTranslate('god is great', {to: 'hi'})).text;
-        result2.SecondLang= (await googleTranslate('god is great', {to: 'ka'})).text;
         res.status(200).json({
         message: "successfull",
             data: result
