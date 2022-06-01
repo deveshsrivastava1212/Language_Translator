@@ -1,41 +1,75 @@
-
-const cache = require('../cache/cacheRouter');
+const {translate} = require('../model/TranslateSchema');
+// const cache = require('../cache/cacheRouter');
 const googleTranslate = require('@vitalets/google-translate-api');
+const translateFunc = require('../translate/googleTranslate');
+// const {language} = require('../translate/languages');
 
 exports.transResponse = async(req,res,next)=>{
     //storing the parameter query
-    let param = req.query;
+    let targetLang = req.query.targetLanguage;
+    let yourText = req.query.yourText;
+
     let result = {};
-    let result2 = {
-        'hi': null,
-        'urdu': null,
-        'ka': null,
-        'bengali': null
-    };
-    let languages= ['hi', 'urdu', 'ka', 'bengali']
+    //let result2 = {};
+    // const languages= {
+    //     'hi' : ['urdu', 'bengali','kannada'],
+    //     'ja' : ['zh-CN','ko','German'],
+    //     'ka' : ['telegu','tamil','malyalam'],
+    //     'en' : ['french','spanish']
+    // }
     try {
+        // if ((targetLang) in languages)
+        // {
+        //     for(var i=0; i< languages[targetLang].length; i++)
+        //     {
+        //         const item = languages[targetLang][i];
+        //         const response = await translateFunc(yourText, item);
+        //         result2[item] = response.ans;
+        //     }
+        // }
 
-        for(var i=0; i< languages.length; i++)
-        {
-            let item = languages[i];
-            let store = await googleTranslate(param.yourText , {to : languages[i]})
-            result2[item] = store.text;
+        const cache = await translate.findOne({
+            yourLanguage: yourText,
+            targetLanguage: targetLang,
+        });
+
+        if (cache) {
+            result.originalText = cache.yourLanguage;
+            result.yourLangCode = cache.yourCode;
+            result.targetLanguage = cache.targetLanguage;
+            result.translatedText = cache.targetText;
+            result.another = cache.another;
+            res.status(200).json({
+                message: "Cache Found, you can see your result",
+                data : result//,result2
+            }) 
         }
+        else
+        {
+            //getting the response from the googleTranslate API by providing the query parameter
+            const response = await translateFunc(yourText, targetLang);
+            //storing in the empty list
+            result.originalText = yourText;
+            result.yourLangCode = response.text;
+            result.targetLanguage = targetLang;
+            result.targetText = response.ans;
 
-        //getting the response from the googleTranslate API by providing the query parameter
-        const response = await googleTranslate(param.yourText , {to : param.targetLanguage});
-        //storing in the empty list
-        result.originalText = param.yourText;
-        result.targetLanguage = param.targetLanguage;
-        result.translatedText = response.text;
-        result.fromLanguage = response.from.language.iso;
+            const data = new translate({
+                yourLanguage : result.originalText,
+                yourCode: result.yourLangCode,
+                targetLanguage: result.targetLanguage,
+                targetText: result.targetText,
+               // another: String(result2)
+            })
 
-        //responsing 200 OK and display the json data
-        res.status(200).json({
-            message: "Successfull",
-            data : result, result2
-        }) 
-        
+            await data.save();
+
+            //responsing 200 OK and display the json data
+            res.status(200).json({
+                message: "Successfull",
+                data : result//, result2
+            }) 
+        }
     } catch (err) {
         res.status(500).send('OOPs something went wrong');
         console.log(err);
@@ -46,7 +80,7 @@ exports.transResponse = async(req,res,next)=>{
 exports.test = async(req, res)=> {
     let result ={};
     try {
-        const response = await googleTranslate('god is great', {to: 'ja'})
+        const response = translateFunc(param.yourText, param.targetLanguage)
         result.translatedText = response.text;
         result.fromLanguage = response.from.language.iso;
         res.status(200).json({

@@ -1,11 +1,10 @@
-const express = require('express');
-const req = require('express/lib/request');
-const {transResponse,test} = require('../controllers/transResponse');
+const express = require('express')
+const controllers = require('../controllers/transResponse');
 const cache = require('../cache/cacheRouter');
 const router = express.Router();
 
 //GET router API
-router.get('/translate', cache(15), transResponse);
-router.get('/test',cache(15), test);
+router.get('/translate', cache(15), controllers.transResponse);
+router.get('/test',cache(15), controllers.test);
 
 module.exports = router;

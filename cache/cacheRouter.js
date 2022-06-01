@@ -30,3 +30,4 @@ module.exports = duration => (req, res, next) => {
         return next();
     }
 }
+
